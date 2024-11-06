@@ -57,7 +57,7 @@ def ocr():
         return render_error(f"failed to detect", ocr_result)
     return render_error("no file")
 
-@app.route('/redirect', methods=['GET'])
+@app.route('/redirect', methods=['POST'])
 def redirect():
     return render_error("failed validation", request.form['number'])
 
