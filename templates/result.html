@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scan Result</title>
+    <title>Barcode Results</title>
 </head>
 <body>
-    <h1>Scan Result</h1>
-    <pre>{{ result }}</pre>
-    <a href="/">Scan another QR Code</a>
+    <h1>Barcode Results</h1>
+    {% for result in results %}
+        <p>{{ result }}</p>
+    {% endfor %}
+    <h2>Processed Image:</h2>
+    <img src="{{ output_image_path }}" alt="Processed Image">
+    <br>
+    <a href="/">Upload another image</a>
 </body>
 </html>
