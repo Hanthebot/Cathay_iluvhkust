@@ -1,15 +1,14 @@
-from flask import Flask, request, jsonify, render_template
-import cv2
-import numpy as np
+from flask import Flask, request, render_template
 import pytesseract
 from PIL import Image
-import re
 
 from preprocess import preprocess_img
 from postprocess import extract_11_digit_number, make_dash_separated, validate
+from qr import generate_qr
 
 app = Flask(__name__, static_url_path='/static')
 pytesseract.pytesseract.tesseract_cmd = <YOUR_TESSERACT_DIR>
+OPTIONS = "-c tessedit_char_whitelist=0123456789,."
 
 def render_error(msg: str):
     return render_template('error.html', msg = msg)
@@ -27,14 +26,17 @@ def ocr():
     if file:
         image = Image.open(file.stream)
         preprocessed = preprocess_img(image)
-        ocr_result = pytesseract.image_to_string(preprocessed, lang='eng')
+        ocr_result = pytesseract.image_to_string(preprocessed, lang='eng', config=OPTIONS)
         waybill = extract_11_digit_number(ocr_result)
         if waybill:
             if validate(waybill):
-                return render_template('ocr_rst.html', result = make_dash_separated(waybill))
+                result = {
+                    "waybill": make_dash_separated(waybill),
+                    "src": generate_qr(waybill)
+                }
+                return render_template('ocr_rst.html', result = result)
             return render_error(f"failed validation: {waybill}")
-        else:
-            return render_error(f"failed to detect from: {ocr_result}")
+        return render_error(f"failed to detect from: {ocr_result}")
     return render_error("no file")
 
 @app.route('/')
