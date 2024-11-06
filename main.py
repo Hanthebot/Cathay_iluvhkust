@@ -5,6 +5,9 @@ from PIL import Image
 from preprocess import preprocess_img
 from postprocess import extract_11_digit_number, make_dash_separated, validate
 from qr import generate_qr
+import os
+
+PORT = os.getenv('PORT', 4000)
 
 app = Flask(__name__, static_url_path='/static')
 pytesseract.pytesseract.tesseract_cmd = r'static/tesseract/tesseract.exe'
@@ -78,4 +81,4 @@ def root():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=PORT)
