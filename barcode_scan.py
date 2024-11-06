@@ -1,45 +1,54 @@
-# Importing library 
-import cv2 
-from pyzbar.pyzbar import decode 
+from flask import Flask, request, render_template
+import cv2
+from pyzbar.pyzbar import decode
+import numpy as np
 
-# Make one method to decode the barcode 
-def BarcodeReader(image): 
-	
-	# read the image in numpy array using cv2 
-	img = cv2.imread(image) 
-	
-	# Decode the barcode image 
-	detectedBarcodes = decode(img) 
-	
-	# If not detected then print the message 
-	if not detectedBarcodes: 
-		print("Barcode Not Detected or your barcode is blank/corrupted!") 
-	else: 
-		
-		# Traverse through all the detected barcodes in image 
-		for barcode in detectedBarcodes: 
-			
-			# Locate the barcode position in image 
-			(x, y, w, h) = barcode.rect 
-			
-			# Put the rectangle in image using 
-			# cv2 to highlight the barcode 
-			cv2.rectangle(img, (x-10, y-10), 
-						(x + w+10, y + h+10), 
-						(255, 0, 0), 2) 
-			
-			if barcode.data!="": 
-				
-			# Print the barcode data 
-				print(barcode.data) 
-				print(barcode.type) 
-				
-	#Display the image 
-	cv2.imshow("Image", img) 
-	cv2.waitKey(0) 
-	cv2.destroyAllWindows() 
+app = Flask(__name__)
 
-if __name__ == "__main__": 
-# Take the image from user 
-	image="Img.jpg"
-	BarcodeReader(image) 
+def BarcodeReader(image_path):
+    # Read the image
+    img = cv2.imread(image_path)
+
+    # Decode the QR codes/barcodes
+    detectedBarcodes = decode(img)
+
+    # Check if any barcodes were detected
+    if not detectedBarcodes:
+        return "QR Code Not Detected or the QR Code is blank/corrupted!"
+
+    # Prepare a list to collect results
+    results = []
+
+    for barcode in detectedBarcodes:
+        # Draw a rectangle around the detected QR code
+        (x, y, w, h) = barcode.rect
+        cv2.rectangle(img, (x-10, y-10), (x + w+10, y + h+10), (255, 0, 0), 2)
+
+        # Extract the barcode data
+        if barcode.data:
+            results.append(f"QR Code data: {barcode.data.decode('utf-8')}\nQR Code type: {barcode.type}")
+
+    # Optionally save the annotated image (for debugging)
+    cv2.imwrite('annotated_image.jpg', img)
+
+    # Return results as a single string
+    return "\n".join(results)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        # Get the uploaded image
+        image = request.files['image']
+        image_path = 'uploaded_image.jpg'
+        image.save(image_path)
+
+        # Read the barcode from the image
+        result = BarcodeReader(image_path)
+
+        # Render the result in the result template
+        return render_template('result.html', result=result)
+
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
