@@ -2,7 +2,8 @@ import re
 
 def validate(digits):
     """ check digit validity """
-    assert(len(digits) >= 11)
+    if len(digits) < 11:
+        return False
     return int(digits[3:10]) % 7 == int(digits[-1])
 
 def make_dash_separated(digits):
