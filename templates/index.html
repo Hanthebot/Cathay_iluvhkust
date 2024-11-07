@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+        <title>Upload an Image</title>
+        <script src="https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm@0.9.15/dist/index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@undecaf/barcode-detector-polyfill@0.9.20/dist/index.js"></script>
+    <style>
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload an Image</h1>
+        <form action="/ocr" method="post" enctype="multipart/form-data">
+            <label for="image">Select image to upload:</label>
+            <input type="file" id="image" name="file" accept="image/*" required>
+            <button type="submit">Upload Image</button>
+        </form>
+        <div class="camera">
+            <video id="video" width="640" height="480" autoplay></video>
+            <br>
+            <button id="snap">Capture Photo</button>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <button id="toggle">Turn off Camera</button>
+            <!-- <button id="clear">Clear Barcode</button> -->
+        </div>
+        <!-- <p id="barcode">N/A</p> -->
+    </div>
+    <script src="{{ url_for('static', filename='js/video.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/live.js') }}" type="module"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+</body>
+</html>
