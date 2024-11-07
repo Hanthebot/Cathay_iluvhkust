@@ -35,8 +35,3 @@ function validate(digits) {
     }
     return parseInt(digits.slice(3, 10)) % 7 === parseInt(digits[digits.length - 1]);
 }
-
-
-document.getElementById('clear').addEventListener('click', function() {
-    document.getElementById('barcode').textContent = 'Waiting...';
-});

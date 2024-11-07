@@ -10,7 +10,7 @@ import os
 PORT = os.getenv('PORT', 4000)
 
 app = Flask(__name__, static_url_path='/static')
-pytesseract.pytesseract.tesseract_cmd = r'static/tesseract/tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = r'./static/tesseract/tesseract.exe'
 OPTIONS = "-c tessedit_char_whitelist=0123456789"
 
 def render_error(msg: str, attempt: str = ""):
